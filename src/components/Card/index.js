@@ -1,7 +1,5 @@
 import React from 'react';
 
-const Table = () => {
+export const Card = () => {
   return <div></div>;
 };
-
-export default Table;

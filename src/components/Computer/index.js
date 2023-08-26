@@ -1,7 +1,5 @@
 import React from 'react';
 
-const Card = () => {
+export const Computer = () => {
   return <div></div>;
 };
-
-export default Card;
