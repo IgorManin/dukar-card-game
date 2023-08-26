@@ -1,7 +1,7 @@
-import { Deck } from './components/Deck/Deck';
+import Table from './components/Table/Table';
 
 const App = () => {
-  return <Deck />;
+  return <Table />;
 };
 
 export default App;
