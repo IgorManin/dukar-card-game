@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import { Deck } from '../Deck';
 import { Computer } from '../Computer';
 import { Player } from '../Player';
-import { beginingGame, firstHand } from '../../common/functions/firstHand';
+import { beginingGame, firstHand } from '../../common/functions';
 
 export const Table = ({ startGame }) => {
   const [allCards, setAllCards] = useState(null);
