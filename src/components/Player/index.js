@@ -1,5 +1,5 @@
 import React from 'react';
 
-export const Player = () => {
-  return <div></div>;
+export const Player = ({ playerCards }) => {
+  return console.log('playerCards', playerCards);
 };

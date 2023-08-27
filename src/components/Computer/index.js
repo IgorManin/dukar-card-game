@@ -1,5 +1,5 @@
 import React from 'react';
 
-export const Computer = () => {
-  return <div></div>;
+export const Computer = ({ computerCards }) => {
+  return console.log('computerCards', computerCards);
 };
