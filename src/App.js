@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Button, Container } from '@mui/material';
 import { Table } from './components';
 import { useState } from 'react';
 
@@ -6,7 +6,7 @@ const App = () => {
   const [startGame, setStartGame] = useState(false);
 
   return (
-    <Box
+    <Container
       sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -22,9 +22,9 @@ const App = () => {
         variant="contained"
         color="success"
       >
-        Success
+        Начать игру
       </Button>
-    </Box>
+    </Container>
   );
 };
 

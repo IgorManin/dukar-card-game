@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box } from '@mui/material';
+import { Container } from '@mui/material';
 import { Deck } from '../Deck';
 import { Computer } from '../Computer';
 import { Player } from '../Player';
@@ -20,16 +20,19 @@ export const Table = ({ startGame }) => {
   }, [allCards]);
 
   return (
-    <Box
+    <Container
       sx={{
-        width: '90%',
-        height: '80%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        width: '100%',
+        height: '70%',
         backgroundColor: 'primary.dark',
       }}
     >
       <Player playerCards={playerCards} />
       <Deck deckCards={deckCards} />
       <Computer computerCards={computerCards} />
-    </Box>
+    </Container>
   );
 };
