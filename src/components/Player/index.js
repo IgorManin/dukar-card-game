@@ -1,35 +1,47 @@
-import React from 'react';
-import { Box as Card, Container } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Box as Card, Stack } from '@mui/material';
 
-export const Player = ({ playerCards }) => {
+export const Player = ({
+  whoseMove,
+  playerCards,
+  setPlayerCards,
+  cardsOnTheTable,
+  setCardsOnTheTable,
+  setMove,
+  findMatchingCards,
+}) => {
+  useEffect(() => {
+    if (whoseMove === 'Ход ПК') {
+      findMatchingCards();
+    }
+  }, [whoseMove]);
+  const MakeMove = (el) => {
+    const selectedCard = playerCards.splice(el, 1)[0];
+    setPlayerCards(playerCards);
+    setCardsOnTheTable([...cardsOnTheTable, selectedCard]);
+    setMove('Ход ПК');
+  };
   return (
-    <Container
-      sx={{
-        display: 'flex',
-        height: '25%',
-        backgroundColor: 'blue',
-        padding: '10px',
-      }}
-    >
+    <Stack p={1} backgroundColor="blue" direction="row" gap={1}>
       {playerCards?.map(({ suit, rank }, key) => (
         <Card
+          onClick={() => MakeMove(key)}
+          width={100}
+          height={150}
+          borderRadius={1}
           key={key}
+          bgcolor="red"
           sx={{
-            width: '100px',
-            height: '150px',
-            backgroundColor: 'red',
-            marginRight: '5px',
-            borderRadius: '5px',
             cursor: 'pointer',
-            transition: 'margin 0.2s ease-in-out',
             '&:hover': {
-              marginTop: '5px',
+              transition: 'transform 0.5s ease',
+              transform: 'translateY(-7px)',
             },
           }}
         >
-          {`${suit} ${rank}`}
+          {suit} {rank}
         </Card>
       ))}
-    </Container>
+    </Stack>
   );
 };

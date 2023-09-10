@@ -14,14 +14,13 @@ export const firstHand = (
   allCards,
   setPlayerCards,
   setComputerCards,
+  setTrumpCard,
   setDeckCards,
 ) => {
   if (allCards) {
-    const playerDrawn = allCards.slice(0, 6);
-    const computerDrawn = allCards.slice(6, 12);
-    const deckRemaining = allCards.slice(12);
-    setPlayerCards(playerDrawn);
-    setComputerCards(computerDrawn);
-    setDeckCards(deckRemaining);
+    setPlayerCards(allCards?.slice(0, 6));
+    setComputerCards(allCards?.slice(6, 12));
+    setTrumpCard(allCards[12]);
+    setDeckCards(allCards?.slice(13));
   }
 };

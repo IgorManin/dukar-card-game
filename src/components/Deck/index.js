@@ -1,37 +1,38 @@
-import { Box, Container } from '@mui/material';
+import { Box as Card, Stack } from '@mui/material';
 import React from 'react';
 
-export const Deck = ({ deckCards }) => {
+export const Deck = ({ deckCards, trumpCard, cardsOnTheTable }) => {
   return (
-    <Container
-      sx={{
-        display: 'flex',
-        height: '35%',
-        backgroundColor: 'blue',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '10px',
-      }}
+    <Stack
+      bgcolor="blue"
+      p={5}
+      direction="row"
+      justifyContent="space-between"
+      alignItems="center"
     >
-      <Box
-        sx={{
-          height: '100%',
-          width: '80%',
-          backgroundColor: 'green',
-          marginRight: '25px',
-        }}
-      ></Box>
-      <Box
-        sx={{
-          width: '100px',
-          height: '150px',
-          backgroundColor: 'red',
-          marginRight: '5px',
-          borderRadius: '5px',
-        }}
+      <Stack
+        direction="row"
+        p={2}
+        gap={1}
+        height={200}
+        width="80%"
+        bgcolor="green"
       >
-        [deckCards]
-      </Box>
-    </Container>
+        {cardsOnTheTable?.map(({ suit, rank }, key) => (
+          <Card
+            width={100}
+            height={150}
+            borderRadius={1}
+            key={key}
+            bgcolor="red"
+          >
+            {suit} {rank}
+          </Card>
+        ))}
+      </Stack>
+      {deckCards && (
+        <Stack width={100} height={150} borderRadius={1} bgcolor="red"></Stack>
+      )}
+    </Stack>
   );
 };
