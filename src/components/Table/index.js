@@ -3,6 +3,9 @@ import { Stack } from '@mui/material';
 import { Deck } from '../Deck';
 import { Player } from '../Player';
 import { beginingGame, firstHand } from '../../common/functions';
+import { PLAYERS_MOVE } from '../../App';
+
+const colors = ['red', 'purple'];
 
 const changePkCards = (smallestCard, setComputerCards, computerCards) => {
   const updatedComputerCards = computerCards.filter((item) => {
@@ -13,12 +16,21 @@ const changePkCards = (smallestCard, setComputerCards, computerCards) => {
 
 export const Table = ({ startGame, whoseMove, setMove }) => {
   const [allCards, setAllCards] = useState(null);
-  const [playerCards, setPlayerCards] = useState(null);
-  const [computerCards, setComputerCards] = useState(null);
-  const [deckCards, setDeckCards] = useState(null);
+  const [playerCards, setPlayerCards] = useState([]);
+  const [computerCards, setComputerCards] = useState([]);
+  const [deckCards, setDeckCards] = useState([]);
   const [trumpCard, setTrumpCard] = useState(null);
   const [cardsOnTheTable, setCardsOnTheTable] = useState([]);
   const [isTakeButton, setIsTakeButton] = useState(false);
+  const [allCardsAreBeaten, setAllCardsAreBeaten] = useState([]);
+  const [flag, setFlag] = useState(false);
+
+  const cheackFlag = () => {
+    setFlag(!flag);
+    setTimeout(() => {
+      setFlag(!flag);
+    }, 1000);
+  };
 
   useEffect(() => {
     beginingGame(startGame, setAllCards);
@@ -59,8 +71,8 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         return currentCard.rank < minCard.rank ? currentCard : minCard;
       });
       if (smallestCard) {
-        setMove('Ход Игрока');
         changePkCards(smallestCard, setComputerCards, computerCards);
+        setMove(PLAYERS_MOVE);
         return setCardsOnTheTable([...cardsOnTheTable, smallestCard]);
       }
     }
@@ -81,6 +93,7 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         setCardsOnTheTable={setCardsOnTheTable}
         setMove={setMove}
         computerIsProtected={computerIsProtected}
+        color={colors[0]}
       />
       <Deck
         cardsOnTheTable={cardsOnTheTable}
@@ -89,10 +102,15 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         deckCards={deckCards}
         isTakeButton={isTakeButton}
         whoseMove={whoseMove}
+        setMove={setMove}
         playerCards={playerCards}
         setPlayerCards={setPlayerCards}
         computerCards={computerCards}
-        setComputerCard={setComputerCards}
+        setComputerCards={setComputerCards}
+        allCardsAreBeaten={allCardsAreBeaten}
+        setAllCardsAreBeaten={setAllCardsAreBeaten}
+        flag={flag}
+        cheackFlag={cheackFlag}
       />
       <Player
         whoseMove={whoseMove}
@@ -102,6 +120,7 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         setCardsOnTheTable={setCardsOnTheTable}
         setMove={setMove}
         computerIsProtected={computerIsProtected}
+        color={colors[1]}
       />
     </Stack>
   );

@@ -1,5 +1,15 @@
 import { Box as Card, Button, Stack } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { COMPUTER_MOVE, PLAYERS_MOVE } from '../../App';
+
+const dealCards = (playersCards, deckCards, setPlayerCards) => {
+  const count = 6;
+  if (playersCards.length < 6) {
+    const difference = Math.abs(count - playersCards?.length);
+    const receivedCards = deckCards?.splice(0, difference);
+    setPlayerCards([...playersCards, ...receivedCards]);
+  }
+};
 
 export const Deck = ({
   deckCards,
@@ -8,18 +18,43 @@ export const Deck = ({
   setCardsOnTheTable,
   isTakeButton,
   whoseMove,
+  setMove,
   playerCards,
   setPlayerCards,
   computerCards,
-  setComputerCard,
+  setComputerCards,
+  allCardsAreBeaten,
+  setAllCardsAreBeaten,
+  cheackFlag,
+  flag,
 }) => {
+  useEffect(() => {
+    dealCards(computerCards, deckCards, setComputerCards);
+    dealCards(playerCards, deckCards, setPlayerCards);
+  }, [flag]);
+
   const takeCards = () => {
-    if (whoseMove === 'Ход ПК') {
-      setComputerCard([...computerCards, ...cardsOnTheTable]);
+    if (whoseMove === COMPUTER_MOVE) {
+      setComputerCards([...computerCards, ...cardsOnTheTable]);
+      setMove(PLAYERS_MOVE);
     } else {
       setPlayerCards([...playerCards, ...cardsOnTheTable]);
+      setMove(PLAYERS_MOVE);
     }
     setCardsOnTheTable([]);
+    cheackFlag();
+  };
+
+  const removeCards = () => {
+    setAllCardsAreBeaten([...allCardsAreBeaten, ...cardsOnTheTable]);
+    setCardsOnTheTable([]);
+    if (whoseMove === COMPUTER_MOVE) {
+      setMove(PLAYERS_MOVE);
+    }
+    if (whoseMove === PLAYERS_MOVE) {
+      setMove(COMPUTER_MOVE);
+    }
+    cheackFlag();
   };
 
   return (
@@ -74,6 +109,17 @@ export const Deck = ({
             />
           )}
         </Stack>
+        <Button
+          onClick={removeCards}
+          variant="contained"
+          color="success"
+          size="medium"
+          sx={{
+            marginBottom: '5px',
+          }}
+        >
+          Бита
+        </Button>
         {isTakeButton && (
           <Button
             onClick={takeCards}

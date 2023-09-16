@@ -2,9 +2,12 @@ import { Button, Container, Stack } from '@mui/material';
 import { Table } from './components';
 import { useState } from 'react';
 
+export const PLAYERS_MOVE = 'Ход Игрока';
+export const COMPUTER_MOVE = 'Ход ПК';
+
 const App = () => {
   const [startGame, setStartGame] = useState(false);
-  const [whoseMove, setMove] = useState('Ход Игрока');
+  const [whoseMove, setMove] = useState(PLAYERS_MOVE);
 
   const handleStartGame = () => {
     setStartGame(true);
