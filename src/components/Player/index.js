@@ -8,11 +8,11 @@ export const Player = ({
   cardsOnTheTable,
   setCardsOnTheTable,
   setMove,
-  findMatchingCards,
+  computerIsProtected,
 }) => {
   useEffect(() => {
     if (whoseMove === 'Ход ПК') {
-      findMatchingCards();
+      computerIsProtected();
     }
   }, [whoseMove]);
   const MakeMove = (el) => {

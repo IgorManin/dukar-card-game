@@ -18,30 +18,7 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
   const [deckCards, setDeckCards] = useState(null);
   const [trumpCard, setTrumpCard] = useState(null);
   const [cardsOnTheTable, setCardsOnTheTable] = useState([]);
-
-  const findMatchingCards = () => {
-    if (cardsOnTheTable) {
-      const lastCardOnTable = cardsOnTheTable[cardsOnTheTable.length - 1];
-      const matchingCards = computerCards?.filter((computerCard) => {
-        return (
-          computerCard.suit === lastCardOnTable.suit &&
-          computerCard.rank > lastCardOnTable.rank
-        );
-      });
-      if (matchingCards?.length === 0) {
-        return null;
-      }
-
-      const smallestCard = matchingCards?.reduce((minCard, currentCard) => {
-        return currentCard.rank < minCard.rank ? currentCard : minCard;
-      });
-      if (smallestCard) {
-        setMove('Ход Игрока');
-        changePkCards(smallestCard, setComputerCards, computerCards);
-        return setCardsOnTheTable([...cardsOnTheTable, smallestCard]);
-      }
-    }
-  };
+  const [isTakeButton, setIsTakeButton] = useState(false);
 
   useEffect(() => {
     beginingGame(startGame, setAllCards);
@@ -57,6 +34,38 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
     );
   }, [allCards]);
 
+  const computerIsProtected = () => {
+    if (cardsOnTheTable) {
+      let requiredMap = [];
+      const lastCardOnTable = cardsOnTheTable[cardsOnTheTable.length - 1];
+      requiredMap = computerCards?.filter(
+        (computerCard) =>
+          computerCard.suit === lastCardOnTable.suit &&
+          computerCard.rank > lastCardOnTable.rank,
+      );
+      if (requiredMap?.length === 0) {
+        requiredMap = computerCards?.filter((computerCard) => {
+          if (lastCardOnTable?.suit !== trumpCard.suit) {
+            return computerCard.suit === trumpCard.suit;
+          }
+        });
+        if (requiredMap?.length === 0) {
+          setIsTakeButton(true);
+          return null;
+        }
+      }
+
+      const smallestCard = requiredMap?.reduce((minCard, currentCard) => {
+        return currentCard.rank < minCard.rank ? currentCard : minCard;
+      });
+      if (smallestCard) {
+        setMove('Ход Игрока');
+        changePkCards(smallestCard, setComputerCards, computerCards);
+        return setCardsOnTheTable([...cardsOnTheTable, smallestCard]);
+      }
+    }
+  };
+
   return (
     <Stack
       justifyContent="space-between"
@@ -71,12 +80,19 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         cardsOnTheTable={cardsOnTheTable}
         setCardsOnTheTable={setCardsOnTheTable}
         setMove={setMove}
-        findMatchingCards={findMatchingCards}
+        computerIsProtected={computerIsProtected}
       />
       <Deck
         cardsOnTheTable={cardsOnTheTable}
+        setCardsOnTheTable={setCardsOnTheTable}
         trumpCard={trumpCard}
         deckCards={deckCards}
+        isTakeButton={isTakeButton}
+        whoseMove={whoseMove}
+        playerCards={playerCards}
+        setPlayerCards={setPlayerCards}
+        computerCards={computerCards}
+        setComputerCard={setComputerCards}
       />
       <Player
         whoseMove={whoseMove}
@@ -85,7 +101,7 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         cardsOnTheTable={cardsOnTheTable}
         setCardsOnTheTable={setCardsOnTheTable}
         setMove={setMove}
-        findMatchingCards={findMatchingCards}
+        computerIsProtected={computerIsProtected}
       />
     </Stack>
   );
