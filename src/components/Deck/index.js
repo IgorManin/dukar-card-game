@@ -26,11 +26,15 @@ export const Deck = ({
   allCardsAreBeaten,
   setAllCardsAreBeaten,
   cheackFlag,
+  selectCard,
   flag,
 }) => {
   useEffect(() => {
     dealCards(computerCards, deckCards, setComputerCards);
     dealCards(playerCards, deckCards, setPlayerCards);
+    if (whoseMove === COMPUTER_MOVE && cardsOnTheTable.length === 0) {
+      selectCard(computerCards, trumpCard);
+    }
   }, [flag]);
 
   const takeCards = () => {
