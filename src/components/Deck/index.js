@@ -45,23 +45,6 @@ export const Deck = ({
     setCardsOnTheTable([]);
   };
 
-  // const removeCards = () => {
-  //   console.log('allCardsAreBeaten', allCardsAreBeaten);
-  //   console.log('setCardsOnTheTable', setCardsOnTheTable);
-  //   setAllCardsAreBeaten([...allCardsAreBeaten, ...cardsOnTheTable]);
-  //   setCardsOnTheTable([]);
-  //   cheackFlag();
-  //
-  //   if (whoseMove === COMPUTER_MOVE) {
-  //     setMove(PLAYERS_MOVE);
-  //   }
-  //   if (whoseMove === PLAYERS_MOVE) {
-  //     setSet(false);
-  //     setTimeout(() => {
-  //       setMove(COMPUTER_MOVE);
-  //     }, 1000);
-  //   }
-  // };
   return (
     <Stack
       bgcolor="blue"
@@ -92,7 +75,7 @@ export const Deck = ({
       </Stack>
       <Stack direction="column" marginLeft={1}>
         <Stack direction="row" marginBottom={1}>
-          {trumpCard && (
+          {trumpCard?.rank && (
             <Stack
               width={100}
               height={150}
@@ -103,7 +86,7 @@ export const Deck = ({
               {trumpCard.suit} {trumpCard.rank}
             </Stack>
           )}
-          {deckCards && (
+          {deckCards.length !== 0 && (
             <Stack
               justifyContent="center"
               alignItems="center"

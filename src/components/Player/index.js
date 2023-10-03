@@ -74,7 +74,6 @@ export const Player = ({
       const trumpPlayerCards = playerCards.filter(
         (card) => card?.suit === trumpCard?.suit,
       );
-
       if (trumpPlayerCards.length > 0) {
         trumpPlayerCards.forEach((playableCard) => {
           const matchingCardInHand = cardOnHand.find(
@@ -115,7 +114,7 @@ export const Player = ({
             },
           }}
         >
-          {card.suit} {card.rank}
+          {card?.suit} {card?.rank}
         </Card>
       ))}
     </Stack>

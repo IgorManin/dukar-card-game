@@ -8,7 +8,6 @@ import { COMPUTER_MOVE, PLAYERS_MOVE } from '../../App';
 const colors = ['red', 'purple'];
 
 export const changingUserDeck = (selectedMap, setUserDeck, userDeck) => {
-  console.log('selectedMap', selectedMap);
   const updatedComputerCards = userDeck.filter((item) => {
     return item !== selectedMap;
   });
@@ -52,12 +51,33 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
   const [playerCards, setPlayerCards] = useState([]);
   const [computerCards, setComputerCards] = useState([]);
   const [deckCards, setDeckCards] = useState([]);
-  const [trumpCard, setTrumpCard] = useState(null);
+  const [trumpCard, setTrumpCard] = useState([]);
   const [cardsOnTheTable, setCardsOnTheTable] = useState([]);
   const [isTakeButton, setIsTakeButton] = useState(false);
   const [allCardsAreBeaten, setAllCardsAreBeaten] = useState([]);
   const [clickableCards, setClickableCards] = useState([]);
   const [move, setSet] = useState(true);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     console.log('trumpCard', trumpCard);
+  //   }, 2000);
+  // }, [move]);
+  const suitValues = {
+    suit: trumpCard?.suit,
+  };
+
+  const lastCard = () => {
+    if (trumpCard?.rank && deckCards.length === 0) {
+      if (playerCards.length > computerCards.length) {
+        setComputerCards([...computerCards, trumpCard]);
+        setTrumpCard(suitValues);
+      } else {
+        setPlayerCards([...playerCards, trumpCard]);
+        setTrumpCard(suitValues);
+      }
+    }
+  };
 
   useEffect(() => {
     beginingGame(startGame, setAllCards);
@@ -76,6 +96,7 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
   useEffect(() => {
     dealCards(computerCards, deckCards, setComputerCards);
     dealCards(playerCards, deckCards, setPlayerCards);
+    lastCard();
   }, [move]);
 
   const computerMakeMove = () => {
@@ -103,7 +124,6 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         return currentCard.rank < minCard.rank ? currentCard : minCard;
       });
       if (smallestCard) {
-        console.log('smallestCard', smallestCard);
         changingUserDeck(smallestCard, setComputerCards, computerCards);
         setMove(PLAYERS_MOVE);
         return setCardsOnTheTable([...cardsOnTheTable, smallestCard]);
