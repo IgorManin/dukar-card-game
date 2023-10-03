@@ -3,15 +3,48 @@ import { Stack } from '@mui/material';
 import { Deck } from '../Deck';
 import { Player } from '../Player';
 import { beginingGame, firstHand } from '../../common/functions';
-import { PLAYERS_MOVE } from '../../App';
+import { COMPUTER_MOVE, PLAYERS_MOVE } from '../../App';
 
 const colors = ['red', 'purple'];
 
 export const changingUserDeck = (selectedMap, setUserDeck, userDeck) => {
+  console.log('selectedMap', selectedMap);
   const updatedComputerCards = userDeck.filter((item) => {
     return item !== selectedMap;
   });
   return setUserDeck(updatedComputerCards);
+};
+
+export const dealCards = (playersCards, deckCards, setPlayerCards) => {
+  const count = 6;
+  if (playersCards.length < 6) {
+    const difference = Math.abs(count - playersCards?.length);
+    const receivedCards = deckCards?.splice(0, difference);
+    setPlayerCards([...playersCards, ...receivedCards]);
+  }
+};
+
+export const removeCards = (
+  allCardsAreBeaten,
+  setAllCardsAreBeaten,
+  cardsOnTheTable,
+  setCardsOnTheTable,
+  cheackFlag,
+  whoseMove,
+  setMove,
+  setSet,
+) => {
+  setAllCardsAreBeaten([...allCardsAreBeaten, ...cardsOnTheTable]);
+  setCardsOnTheTable([]);
+  if (whoseMove === COMPUTER_MOVE) {
+    setMove(PLAYERS_MOVE);
+  }
+  if (whoseMove === PLAYERS_MOVE) {
+    setSet(false);
+    setTimeout(() => {
+      setMove(COMPUTER_MOVE);
+    }, 1000);
+  }
 };
 
 export const Table = ({ startGame, whoseMove, setMove }) => {
@@ -23,15 +56,8 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
   const [cardsOnTheTable, setCardsOnTheTable] = useState([]);
   const [isTakeButton, setIsTakeButton] = useState(false);
   const [allCardsAreBeaten, setAllCardsAreBeaten] = useState([]);
-  const [flag, setFlag] = useState(false);
   const [clickableCards, setClickableCards] = useState([]);
-
-  const cheackFlag = () => {
-    setFlag(!flag);
-    setTimeout(() => {
-      setFlag(!flag);
-    }, 1000);
-  };
+  const [move, setSet] = useState(true);
 
   useEffect(() => {
     beginingGame(startGame, setAllCards);
@@ -47,39 +73,14 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
     );
   }, [allCards]);
 
-  const selectCard = (playerCards, trumpCard) => {
-    let result = [];
+  useEffect(() => {
+    dealCards(computerCards, deckCards, setComputerCards);
+    dealCards(playerCards, deckCards, setPlayerCards);
+  }, [move]);
 
-    if (cardsOnTheTable.length === 0) {
-      // Создаем массив, содержащий только карты, у которых масть не совпадает с козырной
-      const nonTrumpCards = playerCards?.filter(
-        (card) => card?.suit !== trumpCard[0]?.suit,
-      );
-
-      if (nonTrumpCards.length === 0) {
-        // Если нет карт, у которых масть не совпадает с козырной, выбираем карту с наименьшим рангом из всех
-        const selectedCard = playerCards.reduce(
-          (minCard, card) => (card.rank < minCard.rank ? card : minCard),
-          playerCards[0],
-        );
-        result.push(selectedCard);
-      } else {
-        // Иначе выбираем карту с наименьшим рангом из карт, у которых масть не совпадает с козырной
-        const selectedCard = nonTrumpCards.reduce(
-          (minCard, card) => (card.rank < minCard.rank ? card : minCard),
-          nonTrumpCards[0],
-        );
-        result.push(selectedCard);
-      }
-      changingUserDeck(result, setComputerCards, computerCards);
-      return setCardsOnTheTable(result);
-    }
-    if (cardsOnTheTable.length !== 0) {
-    }
-  };
-
-  const computerIsProtected = () => {
-    if (cardsOnTheTable) {
+  const computerMakeMove = () => {
+    if (move) {
+      // console.log('Комп бьет карту');
       let requiredMap = [];
       const lastCardOnTable = cardsOnTheTable[cardsOnTheTable.length - 1];
       requiredMap = computerCards?.filter(
@@ -98,14 +99,77 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
           return null;
         }
       }
-
       const smallestCard = requiredMap?.reduce((minCard, currentCard) => {
         return currentCard.rank < minCard.rank ? currentCard : minCard;
       });
       if (smallestCard) {
+        console.log('smallestCard', smallestCard);
         changingUserDeck(smallestCard, setComputerCards, computerCards);
         setMove(PLAYERS_MOVE);
         return setCardsOnTheTable([...cardsOnTheTable, smallestCard]);
+      }
+    } else {
+      // console.log('Комп ходит');
+      if (cardsOnTheTable.length === 0) {
+        let result = [];
+        // Создаем массив, содержащий только карты, у которых масть не совпадает с козырной
+        const nonTrumpCards = computerCards?.filter(
+          (card) => card?.suit !== trumpCard?.suit,
+        );
+        if (nonTrumpCards.length === 0) {
+          // Если нет карт, у которых масть не совпадает с козырной, выбираем карту с наименьшим рангом из всех
+          const selectedCard = computerCards.reduce(
+            (minCard, card) => (card.rank < minCard.rank ? card : minCard),
+            computerCards[0],
+          );
+
+          result.push(selectedCard);
+        } else {
+          // Иначе выбираем карту с наименьшим рангом из карт, у которых масть не совпадает с козырной
+          const selectedCard = nonTrumpCards.reduce(
+            (minCard, card) => (card.rank < minCard.rank ? card : minCard),
+            nonTrumpCards[0],
+          );
+          result.push(selectedCard);
+        }
+        changingUserDeck(result[0], setComputerCards, computerCards);
+        setMove(PLAYERS_MOVE);
+        return setCardsOnTheTable([...cardsOnTheTable, ...result]);
+      } else {
+        let rezult = [];
+        const filteredCards = [...computerCards];
+
+        // Получаем все уровни rank из cardsOnTheTable.
+        const targetRanks = cardsOnTheTable.map((card) => card.rank);
+
+        // Получаем suit из trumpCard.
+        const trumpSuit = trumpCard?.suit;
+
+        // Фильтруем массив filteredCards по заданным условиям.
+        const resultCard = filteredCards.filter((card) => {
+          return targetRanks.includes(card.rank) && card.suit !== trumpSuit;
+        });
+        const minRankCard = resultCard.reduce((minCard, currentCard) => {
+          return currentCard.rank < minCard.rank ? currentCard : minCard;
+        }, resultCard[0]);
+        if (minRankCard) {
+          rezult.push(minRankCard);
+          changingUserDeck(rezult[0], setComputerCards, computerCards);
+          setCardsOnTheTable([...cardsOnTheTable, ...rezult]);
+          return setMove(PLAYERS_MOVE);
+        } else {
+          setMove(PLAYERS_MOVE);
+          setSet(true);
+          return removeCards(
+            allCardsAreBeaten,
+            setAllCardsAreBeaten,
+            cardsOnTheTable,
+            setCardsOnTheTable,
+            whoseMove,
+            setMove,
+            setSet,
+          );
+        }
       }
     }
   };
@@ -124,10 +188,13 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         cardsOnTheTable={cardsOnTheTable}
         setCardsOnTheTable={setCardsOnTheTable}
         setMove={setMove}
-        computerIsProtected={computerIsProtected}
+        computerMakeMove={computerMakeMove}
         color={colors[0]}
         clickableCards={clickableCards}
         setClickableCards={setClickableCards}
+        setIsTakeButton={setIsTakeButton}
+        trumpCard={trumpCard}
+        move={move}
       />
       <Deck
         cardsOnTheTable={cardsOnTheTable}
@@ -143,9 +210,9 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         setComputerCards={setComputerCards}
         allCardsAreBeaten={allCardsAreBeaten}
         setAllCardsAreBeaten={setAllCardsAreBeaten}
-        flag={flag}
-        cheackFlag={cheackFlag}
-        selectCard={selectCard}
+        move={move}
+        setSet={setSet}
+        setIsTakeButton={setIsTakeButton}
       />
       <Player
         whoseMove={whoseMove}
@@ -154,10 +221,13 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         cardsOnTheTable={cardsOnTheTable}
         setCardsOnTheTable={setCardsOnTheTable}
         setMove={setMove}
-        computerIsProtected={computerIsProtected}
+        computerMakeMove={computerMakeMove}
         color={colors[1]}
         clickableCards={clickableCards}
         setClickableCards={setClickableCards}
+        setIsTakeButton={setIsTakeButton}
+        trumpCard={trumpCard}
+        move={move}
       />
     </Stack>
   );

@@ -10,26 +10,45 @@ export const Player = ({
   cardsOnTheTable,
   setCardsOnTheTable,
   setMove,
-  computerIsProtected,
+  computerMakeMove,
   color,
   clickableCards,
-  setClickableCards,
+  trumpCard,
+  move,
 }) => {
   useEffect(() => {
-    if (whoseMove === COMPUTER_MOVE && cardsOnTheTable.length !== 0) {
-      computerIsProtected();
+    if (whoseMove === COMPUTER_MOVE) {
+      computerMakeMove();
     }
   }, [whoseMove]);
 
   const PlayerMakeMove = (el, playerCards, cardOnHand) => {
-    if (cardsOnTheTable.length === 0) {
-      const selectedCard = playerCards.splice(el, 1)[0];
-      setPlayerCards(playerCards);
-      setCardsOnTheTable([...cardsOnTheTable, selectedCard]);
-      setMove(COMPUTER_MOVE);
+    if (move) {
+      // console.log('Человек ходит');
+      if (cardsOnTheTable.length === 0) {
+        const selectedCard = playerCards.splice(el, 1)[0];
+        setPlayerCards(playerCards);
+        setCardsOnTheTable([...cardsOnTheTable, selectedCard]);
+        setMove(COMPUTER_MOVE);
+      } else {
+        const selectedMap = cardOnHand.filter((card) => {
+          const matchingCardOnTable = cardsOnTheTable.find(
+            (tableCard) => tableCard.rank === card.rank,
+          );
+          return matchingCardOnTable !== undefined;
+        });
+        if (selectedMap.length > 0) {
+          changingUserDeck(selectedMap[0], setPlayerCards, playerCards);
+          setCardsOnTheTable([...cardsOnTheTable, ...selectedMap]);
+          return setMove(COMPUTER_MOVE);
+        }
+      }
     } else {
+      // console.log('Человек бьет карту');
+
+      const lastCardOnTable = [cardsOnTheTable[cardsOnTheTable.length - 1]];
       const playableCards = playerCards.filter((handCard) => {
-        const matchingCardOnTable = cardsOnTheTable.find(
+        const matchingCardOnTable = lastCardOnTable.find(
           (tableCard) =>
             tableCard.suit === handCard.suit && tableCard.rank < handCard.rank,
         );
@@ -47,11 +66,32 @@ export const Player = ({
 
           if (matchingCardInHand) {
             changingUserDeck(matchingCardInHand, setPlayerCards, playerCards);
+            setCardsOnTheTable([...cardsOnTheTable, matchingCardInHand]);
+            return setMove(COMPUTER_MOVE);
+          }
+        });
+      }
+      const trumpPlayerCards = playerCards.filter(
+        (card) => card?.suit === trumpCard?.suit,
+      );
+
+      if (trumpPlayerCards.length > 0) {
+        trumpPlayerCards.forEach((playableCard) => {
+          const matchingCardInHand = cardOnHand.find(
+            (handCard) =>
+              handCard.suit === playableCard.suit &&
+              handCard.rank === playableCard.rank,
+          );
+
+          if (matchingCardInHand) {
+            changingUserDeck(matchingCardInHand, setPlayerCards, playerCards);
+            setTimeout(() => {
+              setMove(COMPUTER_MOVE);
+            }, 2000);
+
             return setCardsOnTheTable([...cardsOnTheTable, matchingCardInHand]);
           }
         });
-      } else {
-        return null;
       }
     }
   };

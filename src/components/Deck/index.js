@@ -1,15 +1,7 @@
-import { Box as Card, Button, Stack } from '@mui/material';
+import { Box as Card, Button, Stack, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
 import { COMPUTER_MOVE, PLAYERS_MOVE } from '../../App';
-
-const dealCards = (playersCards, deckCards, setPlayerCards) => {
-  const count = 6;
-  if (playersCards.length < 6) {
-    const difference = Math.abs(count - playersCards?.length);
-    const receivedCards = deckCards?.splice(0, difference);
-    setPlayerCards([...playersCards, ...receivedCards]);
-  }
-};
+import { dealCards, removeCards } from '../Table';
 
 export const Deck = ({
   deckCards,
@@ -26,41 +18,50 @@ export const Deck = ({
   allCardsAreBeaten,
   setAllCardsAreBeaten,
   cheackFlag,
-  selectCard,
-  flag,
+  move,
+  setSet,
+  setIsTakeButton,
 }) => {
   useEffect(() => {
-    dealCards(computerCards, deckCards, setComputerCards);
-    dealCards(playerCards, deckCards, setPlayerCards);
-    if (whoseMove === COMPUTER_MOVE && cardsOnTheTable.length === 0) {
-      selectCard(computerCards, trumpCard);
+    if (move === false && cardsOnTheTable.length % 2 !== 0) {
+      setIsTakeButton(true);
+    } else {
+      setIsTakeButton(false);
     }
-  }, [flag]);
+  }, [move, cardsOnTheTable]);
+
+  const deckCardLength = deckCards.length;
 
   const takeCards = () => {
     if (whoseMove === COMPUTER_MOVE) {
       setComputerCards([...computerCards, ...cardsOnTheTable]);
+      dealCards(playerCards, deckCards, setPlayerCards);
       setMove(PLAYERS_MOVE);
     } else {
       setPlayerCards([...playerCards, ...cardsOnTheTable]);
-      setMove(PLAYERS_MOVE);
-    }
-    setCardsOnTheTable([]);
-    cheackFlag();
-  };
-
-  const removeCards = () => {
-    setAllCardsAreBeaten([...allCardsAreBeaten, ...cardsOnTheTable]);
-    setCardsOnTheTable([]);
-    if (whoseMove === COMPUTER_MOVE) {
-      setMove(PLAYERS_MOVE);
-    }
-    if (whoseMove === PLAYERS_MOVE) {
+      dealCards(computerCards, deckCards, setComputerCards);
       setMove(COMPUTER_MOVE);
     }
-    cheackFlag();
+    setCardsOnTheTable([]);
   };
 
+  // const removeCards = () => {
+  //   console.log('allCardsAreBeaten', allCardsAreBeaten);
+  //   console.log('setCardsOnTheTable', setCardsOnTheTable);
+  //   setAllCardsAreBeaten([...allCardsAreBeaten, ...cardsOnTheTable]);
+  //   setCardsOnTheTable([]);
+  //   cheackFlag();
+  //
+  //   if (whoseMove === COMPUTER_MOVE) {
+  //     setMove(PLAYERS_MOVE);
+  //   }
+  //   if (whoseMove === PLAYERS_MOVE) {
+  //     setSet(false);
+  //     setTimeout(() => {
+  //       setMove(COMPUTER_MOVE);
+  //     }, 1000);
+  //   }
+  // };
   return (
     <Stack
       bgcolor="blue"
@@ -104,17 +105,34 @@ export const Deck = ({
           )}
           {deckCards && (
             <Stack
+              justifyContent="center"
+              alignItems="center"
               marginLeft={-5}
               width={100}
               height={150}
               borderRadius={1}
               bgcolor="red"
               border={1}
-            />
+            >
+              <Typography variant="h3" component="h2">
+                {deckCardLength}
+              </Typography>
+            </Stack>
           )}
         </Stack>
         <Button
-          onClick={removeCards}
+          onClick={() =>
+            removeCards(
+              allCardsAreBeaten,
+              setAllCardsAreBeaten,
+              cardsOnTheTable,
+              setCardsOnTheTable,
+              cheackFlag,
+              whoseMove,
+              setMove,
+              setSet,
+            )
+          }
           variant="contained"
           color="success"
           size="medium"
