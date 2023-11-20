@@ -21,6 +21,8 @@ export const Deck = ({
   move,
   setSet,
   setIsTakeButton,
+  isBitButton,
+  setBitButton,
 }) => {
   useEffect(() => {
     if (move === false && cardsOnTheTable.length % 2 !== 0) {
@@ -103,28 +105,31 @@ export const Deck = ({
             </Stack>
           )}
         </Stack>
-        <Button
-          onClick={() =>
-            removeCards(
-              allCardsAreBeaten,
-              setAllCardsAreBeaten,
-              cardsOnTheTable,
-              setCardsOnTheTable,
-              cheackFlag,
-              whoseMove,
-              setMove,
-              setSet,
-            )
-          }
-          variant="contained"
-          color="success"
-          size="medium"
-          sx={{
-            marginBottom: '5px',
-          }}
-        >
-          Бита
-        </Button>
+        {isBitButton && (
+          <Button
+            onClick={() =>
+              removeCards(
+                allCardsAreBeaten,
+                setAllCardsAreBeaten,
+                cardsOnTheTable,
+                setCardsOnTheTable,
+                cheackFlag,
+                whoseMove,
+                setMove,
+                setSet,
+                setBitButton,
+              )
+            }
+            variant="contained"
+            color="success"
+            size="medium"
+            sx={{
+              marginBottom: '5px',
+            }}
+          >
+            Бита
+          </Button>
+        )}
         {isTakeButton && (
           <Button
             onClick={takeCards}

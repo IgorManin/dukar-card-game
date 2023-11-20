@@ -3,7 +3,12 @@ import { Stack } from '@mui/material';
 import { Deck } from '../Deck';
 import { Player } from '../Player';
 import { beginingGame, firstHand } from '../../common/functions';
-import { COMPUTER_MOVE, PLAYERS_MOVE } from '../../App';
+import {
+  COMPUTER_MOVE,
+  COMPUTER_WIN,
+  PLAYERS_MOVE,
+  PLAYERS_WIN,
+} from '../../App';
 
 const colors = ['red', 'purple'];
 
@@ -32,6 +37,7 @@ export const removeCards = (
   whoseMove,
   setMove,
   setSet,
+  setBitButton,
 ) => {
   setAllCardsAreBeaten([...allCardsAreBeaten, ...cardsOnTheTable]);
   setCardsOnTheTable([]);
@@ -40,13 +46,14 @@ export const removeCards = (
   }
   if (whoseMove === PLAYERS_MOVE) {
     setSet(false);
+    setBitButton(false);
     setTimeout(() => {
       setMove(COMPUTER_MOVE);
     }, 1000);
   }
 };
 
-export const Table = ({ startGame, whoseMove, setMove }) => {
+export const Table = ({ startGame, whoseMove, setMove, handleEndGame }) => {
   const [allCards, setAllCards] = useState(null);
   const [playerCards, setPlayerCards] = useState([]);
   const [computerCards, setComputerCards] = useState([]);
@@ -57,12 +64,27 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
   const [allCardsAreBeaten, setAllCardsAreBeaten] = useState([]);
   const [clickableCards, setClickableCards] = useState([]);
   const [move, setSet] = useState(true);
+  const [isBitButton, setBitButton] = useState(false);
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     console.log('trumpCard', trumpCard);
-  //   }, 2000);
-  // }, [move]);
+  const endGame = () => {
+    if (deckCards.length === 0 && allCardsAreBeaten.length > 0) {
+      if (
+        playerCards.length === 0 &&
+        playerCards.length < computerCards.length
+      ) {
+        handleEndGame(PLAYERS_WIN);
+      }
+      if (
+        computerCards.length === 0 &&
+        computerCards.length < playerCards.length
+      ) {
+        handleEndGame(COMPUTER_WIN);
+      }
+    }
+  };
+
+  endGame();
+
   const suitValues = {
     suit: trumpCard?.suit,
   };
@@ -131,6 +153,7 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
     } else {
       // console.log('Комп ходит');
       if (cardsOnTheTable.length === 0) {
+        setBitButton(false);
         let result = [];
         // Создаем массив, содержащий только карты, у которых масть не совпадает с козырной
         const nonTrumpCards = computerCards?.filter(
@@ -156,6 +179,7 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         setMove(PLAYERS_MOVE);
         return setCardsOnTheTable([...cardsOnTheTable, ...result]);
       } else {
+        setBitButton(false);
         let rezult = [];
         const filteredCards = [...computerCards];
 
@@ -188,6 +212,7 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
             whoseMove,
             setMove,
             setSet,
+            setBitButton,
           );
         }
       }
@@ -215,6 +240,8 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         setIsTakeButton={setIsTakeButton}
         trumpCard={trumpCard}
         move={move}
+        handleEndGame={handleEndGame}
+        isBitButton={isBitButton}
       />
       <Deck
         cardsOnTheTable={cardsOnTheTable}
@@ -233,6 +260,8 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         move={move}
         setSet={setSet}
         setIsTakeButton={setIsTakeButton}
+        isBitButton={isBitButton}
+        setBitButton={setBitButton}
       />
       <Player
         whoseMove={whoseMove}
@@ -248,6 +277,8 @@ export const Table = ({ startGame, whoseMove, setMove }) => {
         setIsTakeButton={setIsTakeButton}
         trumpCard={trumpCard}
         move={move}
+        handleEndGame={handleEndGame}
+        setBitButton={setBitButton}
       />
     </Stack>
   );

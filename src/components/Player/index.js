@@ -15,6 +15,7 @@ export const Player = ({
   clickableCards,
   trumpCard,
   move,
+  setBitButton,
 }) => {
   useEffect(() => {
     if (whoseMove === COMPUTER_MOVE) {
@@ -30,6 +31,7 @@ export const Player = ({
         setPlayerCards(playerCards);
         setCardsOnTheTable([...cardsOnTheTable, selectedCard]);
         setMove(COMPUTER_MOVE);
+        setBitButton(true);
       } else {
         const selectedMap = cardOnHand.filter((card) => {
           const matchingCardOnTable = cardsOnTheTable.find(
