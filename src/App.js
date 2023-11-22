@@ -15,18 +15,23 @@ const App = () => {
   const [winner, setWinner] = useState(null);
 
   const handleEndGame = (player) => {
-    setGame(true);
     setWinner(player);
+    setGame(true);
+    setStartGame(false);
   };
 
   const handleStartGame = () => {
-    setStartGame(true);
     setGame(false);
+    setStartGame(true);
   };
 
   return (
     <>
-      <Modal open={isGameEnd} onClose={() => setGame(false)} winner={winner} />
+      <Modal
+        open={isGameEnd}
+        onClose={() => handleStartGame()}
+        winner={winner}
+      />
       <Container
         sx={{
           height: '100vh',

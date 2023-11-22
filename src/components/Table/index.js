@@ -68,22 +68,29 @@ export const Table = ({ startGame, whoseMove, setMove, handleEndGame }) => {
 
   const endGame = () => {
     if (deckCards.length === 0 && allCardsAreBeaten.length > 0) {
+      console.log('kek1');
       if (
         playerCards.length === 0 &&
         playerCards.length < computerCards.length
       ) {
+        console.log('kek2');
         handleEndGame(PLAYERS_WIN);
       }
       if (
         computerCards.length === 0 &&
         computerCards.length < playerCards.length
       ) {
+        console.log('kek3');
+
         handleEndGame(COMPUTER_WIN);
       }
     }
   };
 
-  endGame();
+  useEffect(() => {
+    console.log('kek');
+    endGame();
+  }, [playerCards, computerCards]);
 
   const suitValues = {
     suit: trumpCard?.suit,
