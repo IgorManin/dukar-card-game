@@ -8,7 +8,7 @@ import {
   COMPUTER_WIN,
   PLAYERS_MOVE,
   PLAYERS_WIN,
-} from '../../App';
+} from '../Game';
 
 const colors = ['red', 'purple'];
 

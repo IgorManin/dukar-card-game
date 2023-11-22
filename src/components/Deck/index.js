@@ -1,6 +1,6 @@
 import { Box as Card, Button, Stack, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
-import { COMPUTER_MOVE, PLAYERS_MOVE } from '../../App';
+import { COMPUTER_MOVE, PLAYERS_MOVE } from '../Game';
 import { dealCards, removeCards } from '../Table';
 
 export const Deck = ({
