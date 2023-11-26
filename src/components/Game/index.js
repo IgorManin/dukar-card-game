@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal } from '../../common/modal/Modal';
 import { Button, Container, Stack } from '@mui/material';
 import { Table } from '../Table';
+import { TotalScore } from '../TotalScore';
 
 export const PLAYERS_MOVE = 'Ход Игрока';
 export const COMPUTER_MOVE = 'Ход ПК';
@@ -13,6 +14,17 @@ export const Game = () => {
   const [whoseMove, setMove] = useState(PLAYERS_MOVE);
   const [isGameEnd, setGame] = useState(false);
   const [winner, setWinner] = useState(null);
+  const [playerScore, setPlayerScore] = useState(0);
+  const [computerScore, setComputerScore] = useState(0);
+
+  useEffect(() => {
+    if (winner === PLAYERS_WIN) {
+      setPlayerScore((prev) => prev + 1);
+    }
+    if (winner === COMPUTER_WIN) {
+      setComputerScore((prev) => prev + 1);
+    }
+  }, [winner]);
 
   const handleEndGame = (player) => {
     setWinner(player);
@@ -39,9 +51,16 @@ export const Game = () => {
         }}
       >
         <Stack height="90vh" alignItems="center" justifyContent="space-evenly">
-          <Stack p={2} bgcolor="yellow" borderRadius={1}>
-            {whoseMove}
+          <Stack direction="row" width="100%" justifyContent="space-between">
+            <TotalScore
+              playerScore={playerScore}
+              computerScore={computerScore}
+            />
+            <Stack p={2} bgcolor="yellow" borderRadius={1}>
+              {whoseMove}
+            </Stack>
           </Stack>
+
           <Table
             startGame={startGame}
             whoseMove={whoseMove}

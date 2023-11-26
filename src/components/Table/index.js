@@ -28,6 +28,10 @@ export const dealCards = (playersCards, deckCards, setPlayerCards) => {
   }
 };
 
+const clearStates = (setCardsOnTheTable) => {
+  return setCardsOnTheTable([]);
+};
+
 export const removeCards = (
   allCardsAreBeaten,
   setAllCardsAreBeaten,
@@ -66,29 +70,32 @@ export const Table = ({ startGame, whoseMove, setMove, handleEndGame }) => {
   const [move, setSet] = useState(true);
   const [isBitButton, setBitButton] = useState(false);
 
+  console.log('isTakeButton', isTakeButton);
+
   const endGame = () => {
+    console.log('kek');
     if (deckCards.length === 0 && allCardsAreBeaten.length > 0) {
       console.log('kek1');
+
       if (
         playerCards.length === 0 &&
         playerCards.length < computerCards.length
       ) {
         console.log('kek2');
+
         handleEndGame(PLAYERS_WIN);
       }
       if (
         computerCards.length === 0 &&
         computerCards.length < playerCards.length
       ) {
-        console.log('kek3');
-
         handleEndGame(COMPUTER_WIN);
       }
+      clearStates(setCardsOnTheTable);
     }
   };
 
   useEffect(() => {
-    console.log('kek');
     endGame();
   }, [playerCards, computerCards]);
 
